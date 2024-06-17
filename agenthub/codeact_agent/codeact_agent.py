@@ -213,6 +213,13 @@ class CodeActAgent(Agent):
             if obs_message:
                 messages.append(obs_message)
 
+        # Access and log the baked-in parameters from the partial function
+        if (
+            hasattr(self.llm.completion, 'keywords')
+            and 'drop_params' in self.llm.completion.keywords
+        ):
+            print('step() -> drop_params')
+
         latest_user_message = [m for m in messages if m['role'] == 'user'][-1]
         if latest_user_message:
             if latest_user_message['content'].strip() == '/exit':

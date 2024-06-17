@@ -1,5 +1,6 @@
 import warnings
 from functools import partial
+from pprint import pformat
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -124,7 +125,9 @@ class LLM:
         )
         metrics = metrics if metrics is not None else Metrics()
 
-        logger.info(f'Initializing LLM with model: {model}')
+        logger.info(
+            f'Initializing LLM with model: {model} {llm_drop_params and " drop_params" or " no drop_params"}'
+        )
         self.model_name = model
         self.api_key = api_key
         self.base_url = base_url
@@ -203,6 +206,16 @@ class LLM:
             for message in messages:
                 debug_message += message_separator + message['content']
             llm_prompt_logger.debug(debug_message)
+
+            # Access and log the baked-in parameters from the partial function
+            if (
+                hasattr(completion_unwrapped, 'keywords')
+                and 'drop_params' in completion_unwrapped.keywords
+            ):
+                logger.info(
+                    f'drop_params in partial function: {pformat(completion_unwrapped.keywords["drop_params"])}'
+                )
+
             resp = completion_unwrapped(*args, **kwargs)
             message_back = resp['choices'][0]['message']['content']
             llm_response_logger.debug(message_back)

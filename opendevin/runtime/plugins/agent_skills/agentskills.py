@@ -126,6 +126,10 @@ def _lint_file(file_path: str) -> tuple[Optional[str], Optional[int]]:
     """
 
     if file_path.endswith('.py'):
+        # TODO: refactor this to actually use Aider's linter
+        # linter = Linter(root=file_path)
+        # result = linter.py_lint(file_path, linter.get_rel_fname(file_path), '')
+
         # Define the flake8 command with selected error codes
         command = [
             'flake8',
